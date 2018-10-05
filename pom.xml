@@ -32,12 +32,12 @@
     <dependency>
       <groupId>com.evanoconnell</groupId>
       <artifactId>rollout-core</artifactId>
-      <version>0.1.0-SNAPSHOT</version>
+      <version>0.2.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.evanoconnell</groupId>
       <artifactId>rollout-storage-local</artifactId>
-      <version>0.1.0-SNAPSHOT</version>
+      <version>0.2.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
 

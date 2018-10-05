@@ -4,6 +4,8 @@ import static spark.Spark.*;
 import com.evanoconnell.rollout.*;
 import com.evanoconnell.rollout.storage.*;
 
+import java.lang.NumberFormatException;
+
 public class App {
 
   static class User implements IRolloutUser {
@@ -16,6 +18,14 @@ public class App {
     }
   }
 
+  static int integer(String integer, int defaultValue) {
+    try {
+      return Integer.parseInt(integer);
+    } catch (NumberFormatException e) {
+      return defaultValue;
+    }
+  }
+
   public static void main(String[] args) {
 
     IRolloutStorage storage = new MapStorage();
@@ -23,20 +33,24 @@ public class App {
 
     port(Integer.valueOf(System.getenv("PORT")));
 
-    get("/feature/activate", (request, response) -> {
-      rollout.activatePercentage("feature", 100);
-      return "activated feature for all ";
+    put("/feature/:feature/activate", (request, response) -> {
+      String feature = request.params(":feature").toString();
+      int percent = integer(request.queryParams("percent"), 100);
+      rollout.activatePercentage(feature, percent);
+      return "activated feature for "+ percent +"% of users";
     });
 
-    get("/feature/deactivate", (request, response) -> {
-      rollout.activatePercentage("feature", 0);
-      return "deactivated feature for all ";
+    put("/feature/:feature/deactivate", (request, response) -> {
+      String feature = request.params(":feature").toString();
+      rollout.activatePercentage(feature, percent);
+      return "deactivated feature for 100% of users";
     });
 
-    get("/feature/:user", (request, response) -> {
+    get("/feature/:feature/:user", (request, response) -> {
+      String feature = request.params(":feature").toString();
       long id = Long.parseLong(request.params(":user"), 10);
-      boolean isActive = rollout.isActive("feature", new User(id));
-      return "User: " + request.params(":user") + "\nActive? " + isActive;
+      boolean isActive = rollout.isActive(feature, new User(id));
+      return isActive;
     });
   }
 

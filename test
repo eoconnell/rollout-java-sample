@@ -1,0 +1,30 @@
+#!/bin/bash
+
+function report {
+  feature=$1
+  for i in {1..10}
+  do
+    url="http://localhost:8888/feature/$feature/$i"
+    val=`curl --silent -X GET $url`
+    printf "%2s: %s\n" $i ${val:0:1}
+  done
+}
+
+function activate {
+  feature=$1
+  percent=$2
+
+  url="http://localhost:8888/feature/$feature/activate?percent=$percent"
+  echo `curl --silent -X PUT $url`
+}
+
+function main {
+  method=$1
+  shift 1
+  case $method in 
+    report) report $@ ;;
+    activate) activate $@ ;;
+  esac
+}
+
+main $@
